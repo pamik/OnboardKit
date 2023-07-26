@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import UIKit
 
 public typealias OnboardPageCompletion = ((_ success: Bool, _ error: Error?) -> Void)
 public typealias OnboardPageAction = (@escaping OnboardPageCompletion) -> Void
@@ -23,7 +24,7 @@ public struct OnboardPage {
   let description: String?
 
   /// The title text to be used for the secondary button that is used to advance to the next page
-  let advanceButtonTitle: String
+  let advanceButtonTitle: String?
 
   /// The title text to be used for the optional action button on the page
   ///
@@ -34,18 +35,33 @@ public struct OnboardPage {
   ///
   /// - note: calling the completion on the action will advance the onboarding to the next page
   let action: OnboardPageAction?
+  let showSkipButton: Bool
+  let btnBackGroundColor: UIColor
+  let imageBackgroundColor: UIColor
+  let imageBorderwidth: CGFloat
+  let imageBorderColor: UIColor
 
   public init(title: String,
               imageName: String? = nil,
               description: String?,
-              advanceButtonTitle: String = NSLocalizedString("Next", comment: ""),
+              advanceButtonTitle: String? = nil,
               actionButtonTitle: String? = nil,
-              action: OnboardPageAction? = nil) {
+              action: OnboardPageAction? = nil,
+              showSkipButton: Bool = true,
+              btnBackGroundColor: UIColor = UIColor(red: 126/255.0, green: 21/255.0, blue: 24/255.0, alpha: 1.0),
+              imageBackgroundColor: UIColor = UIColor.white.withAlphaComponent(0.4),
+              imageBorderwidth: CGFloat = 0,
+              imageBorderColor: UIColor = .clear) {
     self.title = title
     self.imageName = imageName
     self.description = description
     self.advanceButtonTitle = advanceButtonTitle
     self.actionButtonTitle = actionButtonTitle
     self.action = action
+    self.showSkipButton = showSkipButton
+    self.btnBackGroundColor = btnBackGroundColor
+    self.imageBackgroundColor = imageBackgroundColor
+    self.imageBorderwidth = imageBorderwidth
+    self.imageBorderColor = imageBorderColor
   }
 }

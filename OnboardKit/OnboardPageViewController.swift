@@ -5,7 +5,7 @@
 
 import UIKit
 
-internal protocol OnboardPageViewControllerDelegate: class {
+internal protocol OnboardPageViewControllerDelegate: AnyObject {
 
   /// Informs the `delegate` that the action button was tapped
   ///
@@ -23,11 +23,14 @@ internal protocol OnboardPageViewControllerDelegate: class {
 }
 
 internal final class OnboardPageViewController: UIViewController {
+    
+    let ratio = UIScreen.main.bounds.width / UIScreen.main.bounds.height
+
 
   private lazy var pageStackView: UIStackView = {
     let stackView = UIStackView()
     stackView.translatesAutoresizingMaskIntoConstraints = false
-    stackView.spacing = 16.0
+    stackView.spacing = 10.0
     stackView.axis = .vertical
     stackView.alignment = .center
     return stackView
@@ -45,8 +48,18 @@ internal final class OnboardPageViewController: UIViewController {
   private lazy var imageView: UIImageView = {
     let imageView = UIImageView()
     imageView.translatesAutoresizingMaskIntoConstraints = false
+      imageView.layer.shadowColor = UIColor.black.cgColor
+      imageView.layer.shadowOffset = CGSize(width: 0.0, height: 1.0)
+      imageView.layer.shadowRadius = 2.0
+      imageView.layer.shadowOpacity = 0.4
     return imageView
   }()
+    
+    private lazy var gapView: UIView = {
+      let gapView = UIView()
+        gapView.translatesAutoresizingMaskIntoConstraints = false
+      return gapView
+    }()
 
   private lazy var descriptionLabel: UILabel = {
     let label = UILabel()
@@ -91,7 +104,7 @@ internal final class OnboardPageViewController: UIViewController {
   private func customizeStyleWith(_ appearanceConfiguration: OnboardViewController.AppearanceConfiguration) {
     view.backgroundColor = appearanceConfiguration.backgroundColor
     // Setup imageView
-    imageView.contentMode = appearanceConfiguration.imageContentMode
+    //imageView.contentMode = appearanceConfiguration.imageContentMode
     // Style title
     titleLabel.textColor = appearanceConfiguration.titleColor
     titleLabel.font = appearanceConfiguration.titleFont
@@ -119,18 +132,38 @@ internal final class OnboardPageViewController: UIViewController {
 
   override func loadView() {
     view = UIView(frame: CGRect.zero)
-    view.addSubview(titleLabel)
+    view.addSubview(imageView)
     view.addSubview(pageStackView)
-    NSLayoutConstraint.activate([
-      titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-      titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16.0),
-      pageStackView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 16.0),
-      pageStackView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
-      pageStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-      pageStackView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor)
-      ])
-    pageStackView.addArrangedSubview(imageView)
+      
+      
+      if UIDevice.current.userInterfaceIdiom == .pad {
+          NSLayoutConstraint.activate([
+            imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            imageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30.0),
+            pageStackView.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 160),
+            pageStackView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant:10),
+            pageStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -200),
+            pageStackView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: -100)
+            
+          ])
+          
+      } else {
+          NSLayoutConstraint.activate([
+            imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            imageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0),
+            //imageView.widthAnchor.constraint(equalToConstant: view.bounds.width),
+            //imageView.heightAnchor.constraint(equalToConstant: view.bounds.width * 1.333),
+            pageStackView.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 30.0),
+            pageStackView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
+            pageStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10.0),
+            pageStackView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor)
+          ])
+      }
+      
+    
+    pageStackView.addArrangedSubview(titleLabel)
     pageStackView.addArrangedSubview(descriptionLabel)
+    pageStackView.addArrangedSubview(gapView)
     pageStackView.addArrangedSubview(actionButton)
     pageStackView.addArrangedSubview(advanceButton)
 
@@ -140,8 +173,51 @@ internal final class OnboardPageViewController: UIViewController {
     advanceButton.addTarget(self,
                             action: #selector(OnboardPageViewController.advanceTapped),
                             for: .touchUpInside)
-
   }
+    
+//
+//  func loadView2() {
+//      view = UIView(frame: CGRect.zero)
+//      view.addSubview(titleLabel)
+//      view.addSubview(pageStackView)
+//
+//
+//        if UIDevice.current.userInterfaceIdiom == .pad {
+//            NSLayoutConstraint.activate([
+//              titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+//              titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30.0),
+//              pageStackView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 160),
+//              pageStackView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant:10),
+//              pageStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -200),
+//              pageStackView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: -100)
+//
+//            ])
+//
+//        } else {
+//            NSLayoutConstraint.activate([
+//              titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+//              titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30.0),
+//
+//              pageStackView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 100.0),
+//              pageStackView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
+//              pageStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+//              pageStackView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor)
+//            ])
+//        }
+//
+//
+//      pageStackView.addArrangedSubview(imageView)
+//      pageStackView.addArrangedSubview(descriptionLabel)
+//      pageStackView.addArrangedSubview(actionButton)
+//      pageStackView.addArrangedSubview(advanceButton)
+//
+//      actionButton.addTarget(self,
+//                             action: #selector(OnboardPageViewController.actionTapped),
+//                             for: .touchUpInside)
+//      advanceButton.addTarget(self,
+//                              action: #selector(OnboardPageViewController.advanceTapped),
+//                              for: .touchUpInside)
+//    }
 
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
@@ -163,14 +239,23 @@ internal final class OnboardPageViewController: UIViewController {
       ])
   }
 
-  private func configureImageView(_ imageName: String?) {
-    if let imageName = imageName, let image = UIImage(named: imageName) {
-      imageView.image = image
-      imageView.heightAnchor.constraint(equalTo: pageStackView.heightAnchor, multiplier: 0.5).isActive = true
-    } else {
-      imageView.isHidden = true
+    private func configureImageView(_ imageName: String?) {
+        if let imageName = imageName, let image = UIImage(named: imageName) {
+            imageView.image = image
+            imageView.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: ratio > 0.54 ? 0.85 : 1).isActive = true
+            imageView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1).isActive = true
+            if ratio > 0.54 {
+                imageView.contentMode = .scaleAspectFill
+                imageView.clipsToBounds = true
+            } else {
+                imageView.clipsToBounds = false
+            }
+        } else {
+            //        imageView.heightAnchor.constraint(equalToConstant: 10).isActive = true
+            //        imageView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1).isActive = true
+            imageView.isHidden = true
+        }
     }
-  }
 
   private func configureDescriptionLabel(_ description: String?) {
     if let pageDescription = description {
@@ -192,8 +277,12 @@ internal final class OnboardPageViewController: UIViewController {
     }
   }
 
-  private func configureAdvanceButton(_ title: String) {
-    advanceButton.setTitle(title, for: .normal)
+  private func configureAdvanceButton(_ title: String?) {
+    if let advanceButtonTitle = title {
+      advanceButton.setTitle(advanceButtonTitle, for: .normal)
+    } else {
+      advanceButton.isHidden = true
+    }
   }
 
   // MARK: - User Actions
