@@ -12,10 +12,13 @@ final public class OnboardViewController: UIViewController {
   private let pageViewController = UIPageViewController(transitionStyle: .scroll,
                                                             navigationOrientation: .horizontal,
                                                             options: nil)
-  private let pageItems: [OnboardPage]
-  private let appearanceConfiguration: AppearanceConfiguration
-  private let behaviorConfiguration: BehaviorConfiguration
-  private let completion: (() -> Void)?
+    private let pageItems: [OnboardPage]
+    private let appearanceConfiguration: AppearanceConfiguration
+    private let behaviorConfiguration: BehaviorConfiguration
+    private let completion: (() -> Void)?
+    
+    public var dismissed: ((Int?) -> Void)?
+    public var pageIndex: Int?
 
   required public init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
@@ -43,6 +46,12 @@ final public class OnboardViewController: UIViewController {
   override public var supportedInterfaceOrientations: UIInterfaceOrientationMask {
     return .portrait
   }
+    
+    override public func viewDidDisappear(_ animated: Bool) {
+        let pageVC = self.pageViewController.viewControllers?.first as? OnboardPageViewController
+        let pageIndex = pageVC?.pageIndex
+        self.dismissed?(pageIndex)
+    }
 
   override public func loadView() {
     view = UIView(frame: CGRect.zero)

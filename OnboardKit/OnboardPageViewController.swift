@@ -30,7 +30,7 @@ internal final class OnboardPageViewController: UIViewController {
   private lazy var pageStackView: UIStackView = {
     let stackView = UIStackView()
     stackView.translatesAutoresizingMaskIntoConstraints = false
-    stackView.spacing = 10.0
+    stackView.spacing = 15.0
     stackView.axis = .vertical
     stackView.alignment = .center
     return stackView
@@ -160,7 +160,6 @@ internal final class OnboardPageViewController: UIViewController {
           ])
       }
       
-    
     pageStackView.addArrangedSubview(titleLabel)
     pageStackView.addArrangedSubview(descriptionLabel)
     pageStackView.addArrangedSubview(gapView)
@@ -262,7 +261,7 @@ internal final class OnboardPageViewController: UIViewController {
       descriptionLabel.text = pageDescription
       NSLayoutConstraint.activate([
         descriptionLabel.heightAnchor.constraint(greaterThanOrEqualTo: pageStackView.heightAnchor, multiplier: 0.2),
-        descriptionLabel.widthAnchor.constraint(equalTo: pageStackView.widthAnchor, multiplier: 0.8)
+        descriptionLabel.widthAnchor.constraint(equalTo: pageStackView.widthAnchor, multiplier: 0.9)
         ])
     } else {
       descriptionLabel.isHidden = true
